@@ -1,4 +1,5 @@
-from HMM import HiddenMarkovModel
+from HMM import HMMTagger
+# Training data: each word is (word, tag)
 training_data = [
     [("The", "DET"), ("cat", "NOUN"), ("sleeps", "VERB")],
     [("A", "DET"), ("dog", "NOUN"), ("barks", "VERB")],
@@ -10,16 +11,18 @@ training_data = [
     [("A", "DET"), ("bird", "NOUN"), ("chirps", "VERB")]
 ]
 
-hmm = HiddenMarkovModel()
-hmm.train(training_data, laplace=True)
+hmm = HMMTagger()
+hmm.set_laplace(True)
+hmm.train(training_data)
 
-# Print probabilities of trained data
-print(f"TRANSITION PROBABILITIES:")
-hmm.print_transition_probs()
+# Test sentences
+test_sentences = [
+    ["The", "cat", "meows"],
+    ["My", "dog", "barks", "loudly"]
+]
 
-print(f"\nEMISSION PROBABILITIES:")
-hmm.print_emission_probs()
-
-# Predict new tags
-predicted = hmm.predict(["My bird sings sweetly", "The cat barks"])
-print(predicted)
+for sentence in test_sentences:
+    tags, log_prob = hmm.viterbi(sentence)
+    print(f"Sentence: {' '.join(sentence)}")
+    print(f"Predicted Tags: {tags}")
+    print(f"Log Probability: {log_prob:.4f}\n")
